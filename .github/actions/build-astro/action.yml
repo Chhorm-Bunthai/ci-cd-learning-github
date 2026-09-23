@@ -1,0 +1,35 @@
+name: Build Astro
+description: Install dependencies with npm cache, build the Astro static site, and upload the dist artifact.
+
+inputs:
+  node-version:
+    description: The Node.js version to use
+    required: true
+    default: "22.22"
+  artifact-name:
+    description: The name of the artifact to upload
+    required: true
+    default: "dist"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: "npm"
+    
+    - name: Install dependencies
+      run: npm ci
+      shell: bash
+
+    - name: Build Astro
+      run: npm run build
+      shell: bash
+
+    - name: Upload dist
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: dist/
